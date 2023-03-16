@@ -1,42 +1,53 @@
 import React, { useState } from "react";
-import { BsGoogle, BsEyeSlash, BsEye } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
+import { BsEyeSlash, BsEye, BsFacebook } from "react-icons/bs";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import ReCAPTCHA from "react-google-recaptcha";
 
 function Login() {
+  const reCaptCha = () => {
+    setActive(true);
+  };
+  const savePassWord = ()=>{
+    console.log("save");
+  }
+  const [active, setActive] = useState(false);
   const [showpw, setShowpw] = useState(false);
   const [email, getEmail] = useState("");
   const [password, getPassword] = useState("");
 
-  const  navigate = useNavigate()
+  const navigate = useNavigate();
   const showPassword = () => {
     setShowpw(!showpw);
   };
   const handleLogin = (e) => {
     e.preventDefault();
-    let regObj = { email, password};
+    let regObj = { email, password };
     console.log(regObj);
-   fetch("http://localhost:8000/user/"+email).then((res)=>{
-    return res.json();
-   }).then((resp)=>{
-    setTimeout(()=>{
-      navigate('/')
-    },5000)
-    toast.success("Đăng nhập thành công")
+    fetch("http://localhost:8000/user/" + email)
+      .then((res) => {
+        return res.json();
+      })
+      .then((resp) => {
+        setTimeout(() => {
+          navigate("/");
+        }, 5000);
+        toast.success("Đăng nhập thành công");
 
-    console.log(resp);
-   }).catch((err)=>{
-    toast.error("Đăng nhập thất bại")
-   })
+        console.log(resp);
+      })
+      .catch((err) => {
+        toast.error("Đăng nhập thất bại");
+      });
   };
   return (
-    <div className="bg-white h-[100vh] pt-8">
-      <div className="max-w-screen-md bg-[#ddeef8] my-auto mx-auto items-center shadow-lg p-4 rounded-md">
+    <div className="h-[100vh] pt-40">
+      <div className="max-w-screen-md bg-[#ddeef8] dark:bg-[#a5d4f0] my-auto mx-auto items-center shadow-lg p-4 rounded-md">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 items-center">
           <div className="hidden md:block bg-[url('./assets/login.jpg')] h-[80vh] bg-center bg-cover bg-no-repeat"></div>
           <div className="justify-center mx-auto w-[90%]">
-            <h2 className="font-bold text-3xl mb-4">Login</h2>
-            <p className="text-[#707070] my-4">
+            <h2 className="font-bold dark:text-white text-3xl mb-4">Login</h2>
+            <p className="text-[#707070] dark:text-white my-4">
               Welcome to <strong>Blue House Travel</strong>
             </p>
             <div>
@@ -53,11 +64,10 @@ function Login() {
                     placeholder=" "
                     required
                   />
-                  <label className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                  <label className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                     Email address
                   </label>
                 </div>
-
                 <div className="relative z-0 w-full mb-6 group">
                   <div
                     className="absolute right-1 top-[50%]"
@@ -75,11 +85,42 @@ function Login() {
                     placeholder=" "
                     required
                   />
-                  <label className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                  <label className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                     Your password
                   </label>
                 </div>
-                <button className="relative inline-flex w-full items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
+                <ReCAPTCHA
+                  sitekey="6Lfve_EkAAAAAMI4TLGxpqPqTc9cIa8_9XK-VwVw"
+                  onChange={reCaptCha}
+                />
+                <div>
+                  <div className="flex flex-row justify-between my-2">
+                  <div className="flex items-start">
+                    <div className="flex items-center h-5">
+                      <input
+                      onChange={savePassWord}
+                        id="remember"
+                        type="checkbox"
+                        value=""
+                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+                        required
+                      />
+                    </div>
+                    <label
+                      className="ml-2 text-sm font-medium text-gray-900 "
+                    >
+                      Remember me
+                    </label>
+                  </div>
+                  <div className="text-sm font-medium text-gray-900">
+                      <Link to="/resetpassword">Forget password ?</Link>
+                  </div>
+                  </div>
+                </div>
+                <button
+                  disabled={!active}
+                  className="relative inline-flex w-full items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
+                >
                   <span className="relative px-5 py-2.5 w-full transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
                     Login
                   </span>
@@ -90,8 +131,8 @@ function Login() {
                 className="text-white w-full justify-center bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55 mr-2 mb-2"
               >
                 <div className="flex items-center">
-                  <BsGoogle size={20} />
-                  <span className="px-2">Sign in with Google</span>
+                  <BsFacebook size={20} />
+                  <span className="px-2">Sign in with Facebook</span>
                 </div>
               </button>
             </div>
